@@ -14,6 +14,7 @@ public:
   LSY201(Stream &stream);
   void setDebugStream(Stream &stream);
   void reset();
+  void take_picture();
 
 private:
 

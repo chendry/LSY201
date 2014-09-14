@@ -17,6 +17,6 @@ void setup()
 
 void loop()
 {
-  camera.reset();
+  camera.take_picture();
   delay(1000);
 }

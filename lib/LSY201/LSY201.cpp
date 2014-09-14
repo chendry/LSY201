@@ -6,6 +6,9 @@
 const uint8_t TX_RESET[] = { 0x56, 0x00, 0x26, 0x00 };
 const uint8_t RX_RESET[] = { 0x76, 0x00, 0x26, 0x00 };
 
+const uint8_t TX_TAKE_PICTURE[] = { 0x56, 0x00, 0x36, 0x01, 0x00 };
+const uint8_t RX_TAKE_PICTURE[] = { 0x76, 0x00, 0x36, 0x00, 0x00 };
+
 LSY201::LSY201(Stream &stream) : _stream(&stream), _debug(&NullStream()) { } 
 
 void LSY201::setDebugStream(Stream &stream)
@@ -43,6 +46,12 @@ void LSY201::reset()
   _debug->println("reset complete");
 }
 
+void LSY201::take_picture()
+{
+  tx(TX_TAKE_PICTURE, sizeof(TX_TAKE_PICTURE));
+  rx(RX_TAKE_PICTURE, sizeof(RX_TAKE_PICTURE));
+}
+
 void LSY201::discard_all_input()
 {
   while (_stream->available())
@@ -51,8 +60,18 @@ void LSY201::discard_all_input()
 
 void LSY201::tx(const uint8_t *bytes, uint8_t length)
 {
+  _debug->print("sending bytes:");
+
   while (length --)
-    _stream->write(*bytes++);
+  {
+    _debug->print(" ");
+    _debug->print(*bytes, HEX);
+    _stream->write(*bytes);
+
+    bytes ++;
+  }
+
+  _debug->println("");
 }
 
 void LSY201::rx(const uint8_t *bytes, uint8_t length)
