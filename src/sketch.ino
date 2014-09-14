@@ -17,6 +17,8 @@ void setup()
 
 void loop()
 {
+  camera.set_image_size(LSY201::S320x240);
+
   output_size_for_picture_at_compression_ratio(0xFF);
   output_size_for_picture_at_compression_ratio(0x80);
   output_size_for_picture_at_compression_ratio(0x00);

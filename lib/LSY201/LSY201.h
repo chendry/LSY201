@@ -11,6 +11,13 @@ class LSY201
 
 public:
 
+  enum Size
+  {
+    S320x240 = 0x11,
+    S640x480 = 0x00,
+    S160x120 = 0x22
+  };
+
   LSY201(Stream &stream);
   void setDebugStream(Stream &stream);
   void reset();
@@ -20,6 +27,7 @@ public:
   bool read_jpeg_file_content(uint8_t *buf, uint16_t offset, uint16_t size);
   void stop_taking_pictures();
   void set_compression_ratio(uint8_t value);
+  void set_image_size(Size size);
 
 private:
 

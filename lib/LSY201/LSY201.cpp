@@ -21,6 +21,9 @@ const uint8_t RX_STOP_TAKING_PICTURES[] = { 0x76, 0x00, 0x36, 0x00, 0x00 };
 const uint8_t TX_SET_COMPRESSION_RATIO[] = { 0x56, 0x00, 0x31, 0x05, 0x01, 0x01, 0x12, 0x04 };
 const uint8_t RX_SET_COMPRESSION_RATIO[] = { 0x76, 0x00, 0x31, 0x00, 0x00 };
 
+const uint8_t TX_SET_IMAGE_SIZE[] = { 0x56, 0x00, 0x31, 0x05, 0x04, 0x01, 0x00, 0x19 };
+const uint8_t RX_SET_IMAGE_SIZE[] = { 0x76, 0x00, 0x31, 0x00, 0x00 };
+
 LSY201::LSY201(Stream &stream) : _stream(&stream), _debug(&NullStream()) { } 
 
 void LSY201::setDebugStream(Stream &stream)
@@ -120,6 +123,13 @@ void LSY201::set_compression_ratio(uint8_t value)
   _stream->write(value);
 
   rx(RX_SET_COMPRESSION_RATIO, sizeof(RX_SET_COMPRESSION_RATIO));
+}
+
+void LSY201::set_image_size(Size size)
+{
+  tx(TX_SET_IMAGE_SIZE, sizeof(TX_SET_IMAGE_SIZE));
+  _stream->write((uint8_t) size);
+  rx(RX_SET_IMAGE_SIZE, sizeof(RX_SET_IMAGE_SIZE));
 }
 
 void LSY201::discard_all_input()
