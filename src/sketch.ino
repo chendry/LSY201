@@ -17,18 +17,31 @@ void setup()
 
 void loop()
 {
-  camera.reset();
-  delay(2000);
+  output_size_for_picture_at_compression_ratio(0xFF);
+  output_size_for_picture_at_compression_ratio(0x80);
+  output_size_for_picture_at_compression_ratio(0x00);
 
-  camera.stop_taking_pictures();
-  camera.take_picture();
-
-  Serial.println("size:");
-  Serial.println(camera.read_jpeg_file_size());
+  delay(30000);
 
   int offset = 0;
   while (camera.read_jpeg_file_content(buf, offset, sizeof(buf)))
     offset += sizeof(buf);
 
   delay(5000);
+}
+
+void output_size_for_picture_at_compression_ratio(int value)
+{
+  camera.reset();
+  delay(4000);
+
+  camera.set_compression_ratio(value);
+  camera.take_picture();
+
+  uint16_t size = camera.read_jpeg_file_size();
+
+  Serial.print("size at ");
+  Serial.print(value);
+  Serial.print(": ");
+  Serial.println(size);
 }
