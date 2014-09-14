@@ -6,17 +6,21 @@
 
 class LSY201
 {
+  Stream *_stream;
+  Stream *_debug;
+
 public:
 
-  LSY201(Stream &stream) : _stream(&stream)
-  {
-  }
-
+  LSY201(Stream &stream);
+  void setDebugStream(Stream &stream);
   void reset();
 
 private:
 
-  Stream *_stream;
+  void discard_all_input();
+  void tx(const uint8_t *bytes, uint8_t length);
+  void rx(const uint8_t *bytes, uint8_t length);
+  uint8_t read_byte();
 };
 
 #endif
