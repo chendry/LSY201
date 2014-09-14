@@ -18,6 +18,7 @@ public:
   uint16_t read_jpeg_file_size();
   uint8_t *read_jpeg_file_content(uint16_t offset, uint16_t size);
   bool read_jpeg_file_content(uint8_t *buf, uint16_t offset, uint16_t size);
+  void stop_taking_pictures();
 
 private:
 

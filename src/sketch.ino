@@ -20,6 +20,7 @@ void loop()
   camera.reset();
   delay(2000);
 
+  camera.stop_taking_pictures();
   camera.take_picture();
 
   Serial.println("size:");
