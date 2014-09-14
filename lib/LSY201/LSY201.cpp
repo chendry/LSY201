@@ -30,9 +30,12 @@ const uint8_t RX_ENTER_POWER_SAVING[] = { 0x76, 0x00, 0x3E, 0x00, 0x00 };
 const uint8_t TX_EXIT_POWER_SAVING[] = { 0x56, 0x00, 0x3E, 0x03, 0x00, 0x01, 0x00 };
 const uint8_t RX_EXIT_POWER_SAVING[] = { 0x76, 0x00, 0x3E, 0x00, 0x00 };
 
+const uint8_t TX_CHANGE_BAUD_RATE[] = { 0x56, 0x00, 0x24, 0x03, 0x01 };
+const uint8_t RX_CHANGE_BAUD_RATE[] = { 0x76, 0x00, 0x24, 0x00, 0x00 };
+
 LSY201::LSY201(Stream &stream) : _stream(&stream), _debug(&NullStream()) { } 
 
-void LSY201::setDebugStream(Stream &stream)
+void LSY201::set_debug_stream(Stream &stream)
 {
   _debug = &stream;
 }
@@ -63,8 +66,6 @@ void LSY201::reset()
     else
       p ++;
   }
-
-  _debug->println("reset complete");
 }
 
 void LSY201::take_picture()
@@ -148,6 +149,22 @@ void LSY201::exit_power_saving()
 {
   tx(TX_EXIT_POWER_SAVING, sizeof(TX_EXIT_POWER_SAVING));
   rx(RX_EXIT_POWER_SAVING, sizeof(RX_EXIT_POWER_SAVING));
+}
+
+void LSY201::set_baud_rate(Baud baud)
+{
+  _debug->println("resetting");
+
+  tx(TX_CHANGE_BAUD_RATE, sizeof(TX_CHANGE_BAUD_RATE));
+
+  uint8_t params[] = {
+    (baud & 0xFF00) >> 8,
+    baud & 0x00FF
+  };
+
+  tx(params, sizeof(params));
+
+  rx(RX_CHANGE_BAUD_RATE, sizeof(RX_CHANGE_BAUD_RATE));
 }
 
 void LSY201::discard_all_input()
