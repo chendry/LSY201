@@ -9,6 +9,9 @@ const uint8_t RX_RESET[] = { 0x76, 0x00, 0x26, 0x00 };
 const uint8_t TX_TAKE_PICTURE[] = { 0x56, 0x00, 0x36, 0x01, 0x00 };
 const uint8_t RX_TAKE_PICTURE[] = { 0x76, 0x00, 0x36, 0x00, 0x00 };
 
+const uint8_t TX_READ_JPEG_FILE_SIZE[] = { 0x56, 0x00, 0x34, 0x01, 0x00 };
+const uint8_t RX_READ_JPEG_FILE_SIZE[] = { 0x76, 0x00, 0x34, 0x00, 0x04, 0x00, 0x00 };
+
 LSY201::LSY201(Stream &stream) : _stream(&stream), _debug(&NullStream()) { } 
 
 void LSY201::setDebugStream(Stream &stream)
@@ -50,6 +53,14 @@ void LSY201::take_picture()
 {
   tx(TX_TAKE_PICTURE, sizeof(TX_TAKE_PICTURE));
   rx(RX_TAKE_PICTURE, sizeof(RX_TAKE_PICTURE));
+}
+
+uint16_t LSY201::read_jpeg_file_size()
+{
+  tx(TX_READ_JPEG_FILE_SIZE, sizeof(TX_READ_JPEG_FILE_SIZE));
+  rx(RX_READ_JPEG_FILE_SIZE, sizeof(RX_READ_JPEG_FILE_SIZE));
+
+  return (((uint16_t) read_byte()) << 8) | read_byte();
 }
 
 void LSY201::discard_all_input()

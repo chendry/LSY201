@@ -12,11 +12,15 @@ void setup()
 
   camera_serial.begin(38400);
   camera.setDebugStream(Serial);
-  camera.reset();
 }
 
 void loop()
 {
+  camera.reset();
+  delay(3000);
   camera.take_picture();
-  delay(1000);
+
+  Serial.println("size:");
+  Serial.println(camera.read_jpeg_file_size());
+  delay(10000);
 }

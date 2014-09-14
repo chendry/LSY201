@@ -15,6 +15,7 @@ public:
   void setDebugStream(Stream &stream);
   void reset();
   void take_picture();
+  uint16_t read_jpeg_file_size();
 
 private:
 
