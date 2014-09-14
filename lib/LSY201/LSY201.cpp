@@ -1,7 +1,6 @@
 
 #include <Arduino.h>
 #include "LSY201.h"
-#include "NullStream.h"
 
 const uint8_t TX_RESET[] = { 0x56, 0x00, 0x26, 0x00 };
 const uint8_t RX_RESET[] = { 0x76, 0x00, 0x26, 0x00 };
@@ -33,7 +32,11 @@ const uint8_t RX_EXIT_POWER_SAVING[] = { 0x76, 0x00, 0x3E, 0x00, 0x00 };
 const uint8_t TX_CHANGE_BAUD_RATE[] = { 0x56, 0x00, 0x24, 0x03, 0x01 };
 const uint8_t RX_CHANGE_BAUD_RATE[] = { 0x76, 0x00, 0x24, 0x00, 0x00 };
 
-LSY201::LSY201(Stream &stream) : _stream(&stream), _debug(&NullStream()) { } 
+LSY201::LSY201(Stream &stream) : _stream(&stream)
+{
+  _debug = NULL;
+  _found = false;
+} 
 
 void LSY201::set_debug_stream(Stream &stream)
 {
@@ -55,7 +58,8 @@ void LSY201::reset()
 
     if (*p == '\n')
     {
-      _debug->print(buf);
+      if (_debug)
+        _debug->print(buf);
 
       if (strcmp(buf, "Init end\r\n") == 0)
         break;
@@ -70,6 +74,7 @@ void LSY201::reset()
 
 void LSY201::take_picture()
 {
+  _found = false;
   tx(TX_TAKE_PICTURE, sizeof(TX_TAKE_PICTURE));
   rx(RX_TAKE_PICTURE, sizeof(RX_TAKE_PICTURE));
 }
@@ -85,6 +90,9 @@ uint16_t LSY201::read_jpeg_file_size()
 bool LSY201::read_jpeg_file_content(uint8_t *buf, uint16_t offset, uint16_t size)
 {
   static uint8_t last = 0x00;
+
+  if (_found)
+    return false;
 
   tx(TX_READ_JPEG_FILE_CONTENT, sizeof(TX_READ_JPEG_FILE_CONTENT));
 
@@ -108,7 +116,7 @@ bool LSY201::read_jpeg_file_content(uint8_t *buf, uint16_t offset, uint16_t size
     *buf++ = read_byte();
 
     if (last == 0xFF && buf[-1] == 0xD9)
-      return false;
+      _found = true;
 
     last = buf[-1];
   }
@@ -153,8 +161,6 @@ void LSY201::exit_power_saving()
 
 void LSY201::set_baud_rate(Baud baud)
 {
-  _debug->println("resetting");
-
   tx(TX_CHANGE_BAUD_RATE, sizeof(TX_CHANGE_BAUD_RATE));
 
   uint8_t params[] = {
@@ -175,37 +181,47 @@ void LSY201::discard_all_input()
 
 void LSY201::tx(const uint8_t *bytes, uint8_t length)
 {
-  _debug->print("sending bytes:");
+  if (_debug)
+    _debug->print("sending bytes:");
 
   while (length --)
   {
-    _debug->print(" ");
-    _debug->print(*bytes, HEX);
+    if (_debug)
+    {
+      _debug->print(" ");
+      _debug->print(*bytes, HEX);
+    }
+
     _stream->write(*bytes);
 
     bytes ++;
   }
 
-  _debug->println("");
+  if (_debug)
+    _debug->println("");
 }
 
 void LSY201::rx(const uint8_t *bytes, uint8_t length)
 {
-  _debug->println("expecting bytes:");
+  if (_debug)
+    _debug->println("expecting bytes:");
 
   while (length --)
   {
     uint8_t byte = read_byte();
 
-    _debug->print(byte, HEX);
-    _debug->print(" ");
-
-    if (byte == *bytes)
-      _debug->println("ok");
-    else
+    if (_debug)
     {
-      _debug->print("expected ");
-      _debug->println(*bytes, HEX);
+      _debug->print(byte, HEX);
+      _debug->print(" ");
+
+      if (byte == *bytes)
+        _debug->println("ok");
+      else
+      {
+        _debug->print("expected ");
+        _debug->println(*bytes, HEX);
+      }
     }
 
     bytes ++;

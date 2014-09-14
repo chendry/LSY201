@@ -10,22 +10,25 @@ void setup()
 {
   Serial.begin(38400);
   camera_serial.begin(38400);
-  camera.set_debug_stream(Serial);
+
+  Serial.println("setup finished");
 }
 
 void loop()
 {
   camera.reset();
-  delay(3000);
-
-  camera.set_baud_rate(LSY201::Baud19200);
-  camera_serial.begin(19200);
-  delay(2000);
-
+  camera.set_image_size(LSY201::Size160x120);
   camera.take_picture();
-  
-  while (1)
+
+  uint16_t offset = 0;
+  while (camera.read_jpeg_file_content(buf, offset, sizeof(buf)))
   {
-    camera.read_jpeg_file_content(buf, 0, sizeof(buf));
+    for (int i = 0; i < sizeof(buf); i ++)
+      Serial.println(buf[i], HEX);
+
+    offset += sizeof(buf);
   }
+
+  Serial.println("DONE");
+  delay(30000);
 }
