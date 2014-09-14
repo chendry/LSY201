@@ -23,6 +23,9 @@ void loop()
   output_size_for_picture_at_compression_ratio(0x80);
   output_size_for_picture_at_compression_ratio(0x00);
 
+  camera.enter_power_saving();
+  camera.exit_power_saving();
+
   delay(30000);
 
   int offset = 0;

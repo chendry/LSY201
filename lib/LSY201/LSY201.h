@@ -28,6 +28,8 @@ public:
   void stop_taking_pictures();
   void set_compression_ratio(uint8_t value);
   void set_image_size(Size size);
+  void enter_power_saving();
+  void exit_power_saving();
 
 private:
 

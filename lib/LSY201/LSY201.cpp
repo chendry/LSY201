@@ -24,6 +24,12 @@ const uint8_t RX_SET_COMPRESSION_RATIO[] = { 0x76, 0x00, 0x31, 0x00, 0x00 };
 const uint8_t TX_SET_IMAGE_SIZE[] = { 0x56, 0x00, 0x31, 0x05, 0x04, 0x01, 0x00, 0x19 };
 const uint8_t RX_SET_IMAGE_SIZE[] = { 0x76, 0x00, 0x31, 0x00, 0x00 };
 
+const uint8_t TX_ENTER_POWER_SAVING[] = { 0x56, 0x00, 0x3E, 0x03, 0x00, 0x01, 0x01 };
+const uint8_t RX_ENTER_POWER_SAVING[] = { 0x76, 0x00, 0x3E, 0x00, 0x00 };
+
+const uint8_t TX_EXIT_POWER_SAVING[] = { 0x56, 0x00, 0x3E, 0x03, 0x00, 0x01, 0x00 };
+const uint8_t RX_EXIT_POWER_SAVING[] = { 0x76, 0x00, 0x3E, 0x00, 0x00 };
+
 LSY201::LSY201(Stream &stream) : _stream(&stream), _debug(&NullStream()) { } 
 
 void LSY201::setDebugStream(Stream &stream)
@@ -130,6 +136,18 @@ void LSY201::set_image_size(Size size)
   tx(TX_SET_IMAGE_SIZE, sizeof(TX_SET_IMAGE_SIZE));
   _stream->write((uint8_t) size);
   rx(RX_SET_IMAGE_SIZE, sizeof(RX_SET_IMAGE_SIZE));
+}
+
+void LSY201::enter_power_saving()
+{
+  tx(TX_ENTER_POWER_SAVING, sizeof(TX_ENTER_POWER_SAVING));
+  rx(RX_ENTER_POWER_SAVING, sizeof(RX_ENTER_POWER_SAVING));
+}
+
+void LSY201::exit_power_saving()
+{
+  tx(TX_EXIT_POWER_SAVING, sizeof(TX_EXIT_POWER_SAVING));
+  rx(RX_EXIT_POWER_SAVING, sizeof(RX_EXIT_POWER_SAVING));
 }
 
 void LSY201::discard_all_input()
