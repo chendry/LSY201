@@ -45,7 +45,8 @@ void LSY201::setDebugStream(Stream &stream)
 
 void LSY201::reset()
 {
-  discardAllInput();
+  while (_stream->available())
+    _stream->read();
 
   tx(TX_RESET, sizeof(TX_RESET));
   rx(RX_RESET, sizeof(RX_RESET));
@@ -171,12 +172,6 @@ void LSY201::setBaudRate(Baud baud)
   tx(params, sizeof(params));
 
   rx(RX_CHANGE_BAUD_RATE, sizeof(RX_CHANGE_BAUD_RATE));
-}
-
-void LSY201::discardAllInput()
-{
-  while (_stream->available())
-    _stream->read();
 }
 
 void LSY201::tx(const uint8_t *bytes, uint8_t length)

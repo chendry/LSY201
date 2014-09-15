@@ -43,7 +43,6 @@ public:
 
 private:
 
-  void discardAllInput();
   void tx(const uint8_t *bytes, uint8_t length);
   void rx(const uint8_t *bytes, uint8_t length);
   uint8_t readByte();
