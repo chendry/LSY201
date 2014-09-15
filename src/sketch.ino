@@ -21,7 +21,7 @@ void loop()
   camera.takePicture();
 
   uint16_t offset = 0;
-  while (camera.readJpegFileContent(buf, offset, sizeof(buf)))
+  while (camera.readJpegFileContent(offset, buf, sizeof(buf)))
   {
     for (int i = 0; i < sizeof(buf); i ++)
       Serial.println(buf[i], HEX);

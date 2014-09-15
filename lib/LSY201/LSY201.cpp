@@ -88,7 +88,7 @@ uint16_t LSY201::readJpegFileSize()
   return (((uint16_t) readByte()) << 8) | readByte();
 }
 
-bool LSY201::readJpegFileContent(uint8_t *buf, uint16_t offset, uint16_t size)
+bool LSY201::readJpegFileContent(uint16_t offset, uint8_t *buf, uint16_t size)
 {
   static uint8_t last = 0x00;
 

@@ -33,7 +33,7 @@ public:
   void reset();
   void takePicture();
   uint16_t readJpegFileSize();
-  bool readJpegFileContent(uint8_t *buf, uint16_t offset, uint16_t size);
+  bool readJpegFileContent(uint16_t offset, uint8_t *buf, uint16_t size);
   void stopTakingPictures();
   void setCompressionRatio(uint8_t value);
   void setImageSize(Size size);
