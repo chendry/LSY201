@@ -8,7 +8,7 @@ class LSY201
 {
   Stream *_stream;
   Stream *_debug;
-  bool _found;
+  bool _foundJpegEOF;
 
 public:
 

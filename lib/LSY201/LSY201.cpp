@@ -35,7 +35,7 @@ const uint8_t RX_CHANGE_BAUD_RATE[] = { 0x76, 0x00, 0x24, 0x00, 0x00 };
 LSY201::LSY201(Stream &stream) : _stream(&stream)
 {
   _debug = NULL;
-  _found = false;
+  _foundJpegEOF = false;
 } 
 
 void LSY201::setDebugStream(Stream &stream)
@@ -74,7 +74,7 @@ void LSY201::reset()
 
 void LSY201::takePicture()
 {
-  _found = false;
+  _foundJpegEOF = false;
   tx(TX_TAKE_PICTURE, sizeof(TX_TAKE_PICTURE));
   rx(RX_TAKE_PICTURE, sizeof(RX_TAKE_PICTURE));
 }
@@ -91,7 +91,7 @@ bool LSY201::readJpegFileContent(uint8_t *buf, uint16_t offset, uint16_t size)
 {
   static uint8_t last = 0x00;
 
-  if (_found)
+  if (_foundJpegEOF)
     return false;
 
   tx(TX_READ_JPEG_FILE_CONTENT, sizeof(TX_READ_JPEG_FILE_CONTENT));
@@ -116,7 +116,7 @@ bool LSY201::readJpegFileContent(uint8_t *buf, uint16_t offset, uint16_t size)
     *buf++ = readByte();
 
     if (last == 0xFF && buf[-1] == 0xD9)
-      _found = true;
+      _foundJpegEOF = true;
 
     last = buf[-1];
   }
