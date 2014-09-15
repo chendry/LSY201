@@ -38,14 +38,14 @@ LSY201::LSY201(Stream &stream) : _stream(&stream)
   _found = false;
 } 
 
-void LSY201::set_debug_stream(Stream &stream)
+void LSY201::setDebugStream(Stream &stream)
 {
   _debug = &stream;
 }
 
 void LSY201::reset()
 {
-  discard_all_input();
+  discardAllInput();
 
   tx(TX_RESET, sizeof(TX_RESET));
   rx(RX_RESET, sizeof(RX_RESET));
@@ -54,7 +54,7 @@ void LSY201::reset()
 
   while (1)
   {
-    *p = read_byte();
+    *p = readByte();
 
     if (*p == '\n')
     {
@@ -72,22 +72,22 @@ void LSY201::reset()
   }
 }
 
-void LSY201::take_picture()
+void LSY201::takePicture()
 {
   _found = false;
   tx(TX_TAKE_PICTURE, sizeof(TX_TAKE_PICTURE));
   rx(RX_TAKE_PICTURE, sizeof(RX_TAKE_PICTURE));
 }
 
-uint16_t LSY201::read_jpeg_file_size()
+uint16_t LSY201::readJpegFileSize()
 {
   tx(TX_READ_JPEG_FILE_SIZE, sizeof(TX_READ_JPEG_FILE_SIZE));
   rx(RX_READ_JPEG_FILE_SIZE, sizeof(RX_READ_JPEG_FILE_SIZE));
 
-  return (((uint16_t) read_byte()) << 8) | read_byte();
+  return (((uint16_t) readByte()) << 8) | readByte();
 }
 
-bool LSY201::read_jpeg_file_content(uint8_t *buf, uint16_t offset, uint16_t size)
+bool LSY201::readJpegFileContent(uint8_t *buf, uint16_t offset, uint16_t size)
 {
   static uint8_t last = 0x00;
 
@@ -113,7 +113,7 @@ bool LSY201::read_jpeg_file_content(uint8_t *buf, uint16_t offset, uint16_t size
 
   while (size --)
   {
-    *buf++ = read_byte();
+    *buf++ = readByte();
 
     if (last == 0xFF && buf[-1] == 0xD9)
       _found = true;
@@ -126,13 +126,13 @@ bool LSY201::read_jpeg_file_content(uint8_t *buf, uint16_t offset, uint16_t size
   return true;
 }
 
-void LSY201::stop_taking_pictures()
+void LSY201::stopTakingPictures()
 {
   tx(TX_STOP_TAKING_PICTURES, sizeof(TX_STOP_TAKING_PICTURES));
   rx(RX_STOP_TAKING_PICTURES, sizeof(RX_STOP_TAKING_PICTURES));
 }
 
-void LSY201::set_compression_ratio(uint8_t value)
+void LSY201::setCompressionRatio(uint8_t value)
 {
   tx(TX_SET_COMPRESSION_RATIO, sizeof(TX_SET_COMPRESSION_RATIO));
   _stream->write(value);
@@ -140,26 +140,26 @@ void LSY201::set_compression_ratio(uint8_t value)
   rx(RX_SET_COMPRESSION_RATIO, sizeof(RX_SET_COMPRESSION_RATIO));
 }
 
-void LSY201::set_image_size(Size size)
+void LSY201::setImageSize(Size size)
 {
   tx(TX_SET_IMAGE_SIZE, sizeof(TX_SET_IMAGE_SIZE));
   _stream->write((uint8_t) size);
   rx(RX_SET_IMAGE_SIZE, sizeof(RX_SET_IMAGE_SIZE));
 }
 
-void LSY201::enter_power_saving()
+void LSY201::enterPowerSaving()
 {
   tx(TX_ENTER_POWER_SAVING, sizeof(TX_ENTER_POWER_SAVING));
   rx(RX_ENTER_POWER_SAVING, sizeof(RX_ENTER_POWER_SAVING));
 }
 
-void LSY201::exit_power_saving()
+void LSY201::exitPowerSaving()
 {
   tx(TX_EXIT_POWER_SAVING, sizeof(TX_EXIT_POWER_SAVING));
   rx(RX_EXIT_POWER_SAVING, sizeof(RX_EXIT_POWER_SAVING));
 }
 
-void LSY201::set_baud_rate(Baud baud)
+void LSY201::setBaudRate(Baud baud)
 {
   tx(TX_CHANGE_BAUD_RATE, sizeof(TX_CHANGE_BAUD_RATE));
 
@@ -173,7 +173,7 @@ void LSY201::set_baud_rate(Baud baud)
   rx(RX_CHANGE_BAUD_RATE, sizeof(RX_CHANGE_BAUD_RATE));
 }
 
-void LSY201::discard_all_input()
+void LSY201::discardAllInput()
 {
   while (_stream->available())
     _stream->read();
@@ -208,7 +208,7 @@ void LSY201::rx(const uint8_t *bytes, uint8_t length)
 
   while (length --)
   {
-    uint8_t byte = read_byte();
+    uint8_t byte = readByte();
 
     if (_debug)
     {
@@ -228,7 +228,7 @@ void LSY201::rx(const uint8_t *bytes, uint8_t length)
   }
 }
 
-uint8_t LSY201::read_byte()
+uint8_t LSY201::readByte()
 {
   while (!_stream->available())
     ;

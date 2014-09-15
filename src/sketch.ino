@@ -17,11 +17,11 @@ void setup()
 void loop()
 {
   camera.reset();
-  camera.set_image_size(LSY201::Size160x120);
-  camera.take_picture();
+  camera.setImageSize(LSY201::Size_160x120);
+  camera.takePicture();
 
   uint16_t offset = 0;
-  while (camera.read_jpeg_file_content(buf, offset, sizeof(buf)))
+  while (camera.readJpegFileContent(buf, offset, sizeof(buf)))
   {
     for (int i = 0; i < sizeof(buf); i ++)
       Serial.println(buf[i], HEX);
