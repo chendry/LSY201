@@ -7,7 +7,7 @@ You can purchase the camera from SparkFun here:
 [https://www.sparkfun.com/products/11610](https://www.sparkfun.com/products/11610)
 
 I've tried to mirror the 
-[LSY201 documentation](http://dlnmh9ip6v2uc.cloudfront.net/datasheets/Sensors/LightImaging/LinkSprite%20JPEG%20Color%20Camera%20Manual.pdf)
+[LSY201 documentation](http://www.linksprite.com/upload/file/1291522825.pdf)
 closely and have not added any additional behavior on top of what is documented
 there.
 
