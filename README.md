@@ -66,18 +66,24 @@ and then taking a picture:
 
 ### Taking the Picture
 
-Call `takePicture` to instruct the camera to take a picture.  This simply
-causes the camera to take and store the picture as a JPEG file:
+Call `takePicture` to instruct the camera to take a picture.  This instructs
+the camera to take a picture and store it as a JPEG file which can later be
+retrieved.
 
     camera.takePicture();
 
 ### Reading the Image
 
-Retrieve the image by making multiple calls to the `readJpegFileContent`.  This
-method expects a 0-based offset of where in the JPEG file you want to start
-reading, a buffer to write the data, and the size of that buffer.  The method
-returns `true` when it has read data, or `false` if there is no more data to be
-read because the end of file has been reached.
+Retrieve the image data by making multiple calls to the `readJpegFileContent`.
+This method expects three parameters:
+
+1. a 0-based offset of where in the JPEG file you want to start reading.  (Must
+   be a multiple of 8.)
+2. a buffer to which the data is to be written, and
+3. the size of that buffer.
+
+The method returns `true` when it has read data, or `false` if there is no more
+data to be read because the end-of-file has been reached.
 
 Here's an example of how to read the entire contents of the JPEG and write each
 byte to the serial port:
@@ -102,7 +108,7 @@ the next picture taken:
 * `LS101::Size_640x480`
 * `LS101::Size_160x120`
 
-Before the size change takes effect, you must call `reset`.
+You must call `reset` before the size change takes effect.
 
 To change the compression ratio, call `setCompressionRatio` with any value
 between between 0 (low compression, high quality) and 255 (high compression,
