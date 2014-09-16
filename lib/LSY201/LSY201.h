@@ -28,8 +28,9 @@ public:
     Baud_115200 = 0x0DA6
   };
 
-  LSY201(Stream &stream);
-  void setDebugStream(Stream &stream);
+  LSY201();
+  void setSerial(Stream &stream);
+  void setDebugSerial(Stream &stream);
   void reset();
   void takePicture();
   uint16_t readJpegFileSize();

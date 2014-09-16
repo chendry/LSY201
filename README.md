@@ -4,42 +4,65 @@ LSY201
 LSY201 is an Arduino library to interface with the LinkSprite JPEG TTL Camera.
 You can purchase the camera from SparkFun here:
 
-[https://www.sparkfun.com/products/retired/10061](https://www.sparkfun.com/products/retired/10061)
+[https://www.sparkfun.com/products/11610](https://www.sparkfun.com/products/11610)
 
-I've attempted to mirror the language in the
+I've tried to mirror the 
 [LSY201 documentation](http://dlnmh9ip6v2uc.cloudfront.net/datasheets/Sensors/LightImaging/LinkSprite%20JPEG%20Color%20Camera%20Manual.pdf)
-and have tried to avoid anything on top of documented calls.
+closely and have not added any additional behavior on top of what is documented
+there.
 
-## Basic Usage
+## Usage
 
-Create a LSY201 instance and pass it a stream object configured for the camera.
-In this exaple, the RX and TX pins of the camera are attached to pins 2 and 3,
-respectively, of the Arduino:
+Create a LSY201 instance and call `setSerial` to give a it stream object
+configured for the camera.  In the following example, it is assumed that the TX
+and RX pins of the camera are attached to pins 2 and 3 respectively on the
+Arduino:
 
     SoftwareSerial camera_serial(2, 3);
     camera_serial.begin(38400);  /* LSY201's default baud */
-    LSY201 camera(camera_serial);
+    LSY201 camera;
+    camera.setSerial(camera_serial);
 
 ### Debugging Information
 
-Call `setDebugStream` to see logs of the bytes being sent to and received from
-the camera:
+Call `setDebugSerial` to have additional debug information written to a serial
+object:
 
-    camera.setDebugStream(Serial);
+    camera.setDebugSerial(Serial);
 
-Most methods you invoke on the LSY201 object result in some request being sent
-to the camera followed by some response being read from the camera.  Setting
-the debug stream, as done above, logs these requests and responses so that you
-can see what's going on in the serial monitor.
+Most of the methods exposed by the LSY201 object send some bytes to the camera
+the request) and read some bytes back (the response.)  Setting a debug serial
+object causes those request and response bytes to be logged to that serial
+object.
 
+For example, the following debug output shows the bytes transmitted and
+received while changing the image resolution to 640x480, resetting the camera,
+and then taking a picture:
 
-### Reset
-
-You'll need to reset the camera prior to doing anything.  Also, as per the
-documentation, you'll need to wait 2-3 seconds prior to taking a picture:
-
-    camera.reset();
-    delay(3000);
+    sending bytes: 56 0 31 5 4 1 0 19
+    expecting bytes:
+    76 ok
+    0 ok
+    31 ok
+    0 ok
+    0 ok
+    sending bytes: 56 0 26 0
+    expecting bytes:
+    76 ok
+    0 ok
+    26 ok
+    0 ok
+    Ctrl infr exist
+    User-defined sensor
+    625
+    Init end
+    sending bytes: 56 0 36 1 0
+    expecting bytes:
+    76 ok
+    0 ok
+    36 ok
+    0 ok
+    0 ok
 
 ### Taking the Picture
 
@@ -47,7 +70,6 @@ Call `takePicture` to instruct the camera to take a picture.  This simply
 causes the camera to take and store the picture as a JPEG file:
 
     camera.takePicture();
-
 
 ### Reading the Image
 
@@ -70,3 +92,44 @@ byte to the serial port:
 
        offset += sizeof(buf);
     }
+
+### Setting the Image Compression and Size
+
+Call `setImageSize` with one of the following values to set the image size for
+the next picture taken:
+
+* `LS101::Size_320x240`
+* `LS101::Size_640x480`
+* `LS101::Size_160x120`
+
+Before the size change takes effect, you must call `reset`.
+
+To change the compression ratio, call `setCompressionRatio` with any value
+between between 0 (low compression, high quality) and 255 (high compression,
+low quality.)
+
+The `reset` method changes the compression ratio back to 0x36, so
+`setCompressionRatio` must be called afterwords:
+
+    camera.setImageSize(LS101::Size_320x240);
+    camera.reset();
+    camera.setCompressionRatio(0x80);
+
+### Changing the Baud Rate
+
+Call `setBaudRate` with one of the following values:
+
+* `LS101::Baud_9600`
+* `LS101::Baud_19200`
+* `LS101::Baud_38400`
+* `LS101::Baud_57600`
+* `LS101::Baud_115200`
+
+
+### Miscellaneous
+
+* `readJpegFileSize` returns the size, in bytes, of the most recently taken
+  picture.
+* `enterPowerSaving` and `exitPowerSaving` enter and exit power saving mode.
+* I'm not sure what `stopTakingPictures` actually does, but it's listed in the
+  documentation.

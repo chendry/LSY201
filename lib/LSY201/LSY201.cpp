@@ -32,13 +32,18 @@ const uint8_t RX_EXIT_POWER_SAVING[] = { 0x76, 0x00, 0x3E, 0x00, 0x00 };
 const uint8_t TX_CHANGE_BAUD_RATE[] = { 0x56, 0x00, 0x24, 0x03, 0x01 };
 const uint8_t RX_CHANGE_BAUD_RATE[] = { 0x76, 0x00, 0x24, 0x00, 0x00 };
 
-LSY201::LSY201(Stream &stream) : _stream(&stream)
+LSY201::LSY201()
 {
   _debug = NULL;
   _foundJpegEOF = false;
 } 
 
-void LSY201::setDebugStream(Stream &stream)
+void LSY201::setSerial(Stream &stream)
+{
+  _stream = &stream;
+}
+
+void LSY201::setDebugSerial(Stream &stream)
 {
   _debug = &stream;
 }
