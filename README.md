@@ -8,15 +8,14 @@ You can purchase the camera from SparkFun here:
 
 I've tried to mirror the 
 [LSY201 documentation](http://www.linksprite.com/upload/file/1291522825.pdf)
-closely and have not added any additional behavior on top of what is documented
-there.
+very closely.  Specifically, I have tried to avoid adding any extra behavior on
+top of what is documented there.
 
 ## Usage
 
 Create a LSY201 instance and call `setSerial` to give a it stream object
-configured for the camera.  In the following example, it is assumed that the TX
-and RX pins of the camera are attached to pins 2 and 3 respectively on the
-Arduino:
+configured for the camera.  This example assumes that the TX and RX pins of the
+camera are attached to pins 2 and 3 respectively of the Arduino:
 
     SoftwareSerial camera_serial(2, 3);
     camera_serial.begin(38400);  /* LSY201's default baud */
@@ -37,7 +36,7 @@ object.
 
 For example, the following debug output shows the bytes transmitted and
 received while changing the image resolution to 640x480, resetting the camera,
-and then taking a picture:
+and finally taking a picture:
 
     sending bytes: 56 0 31 5 4 1 0 19
     expecting bytes:
@@ -66,27 +65,26 @@ and then taking a picture:
 
 ### Taking the Picture
 
-Call `takePicture` to instruct the camera to take a picture.  This instructs
-the camera to take a picture and store it as a JPEG file which can later be
-retrieved.
+Calling `takePicture` instructs the camera to take a picture and store it as a
+JPEG file which can later be read.
 
     camera.takePicture();
 
 ### Reading the Image
 
-Retrieve the image data by making multiple calls to the `readJpegFileContent`.
-This method expects three parameters:
+Call `readJpegFileSize` repetedly to read the JPEG data stored on the camera
+from the last picture taken.  This method expects three parameters:
 
-1. a 0-based offset of where in the JPEG file you want to start reading.  (Must
+1. the 0-based offset of where in the JPEG file you want to start reading.  (Must
    be a multiple of 8.)
-2. a buffer to which the data is to be written, and
+2. a buffer to hold the data, and
 3. the size of that buffer.
 
-The method returns `true` when it has read data, or `false` if there is no more
-data to be read because the end-of-file has been reached.
+The method returns `true` when it puts new data into the buffer, or `false` if
+it has not because the end-of-file has been reached.
 
-Here's an example of how to read the entire contents of the JPEG and write each
-byte to the serial port:
+For example, the following reads the entire contents of the JPEG and writes
+each byte to the serial port:
 
     uint16_t offset = 0;
     uint8_t buf[32];
@@ -136,6 +134,11 @@ Call `setBaudRate` with one of the following values:
 
 * `readJpegFileSize` returns the size, in bytes, of the most recently taken
   picture.
-* `enterPowerSaving` and `exitPowerSaving` enter and exit power saving mode.
-* I'm not sure what `stopTakingPictures` actually does, but it's listed in the
-  documentation.
+
+It's not clear from the documentation what the following two commands actually
+do, but I have implemented them and have verified that the camera is sending
+the expected response:
+
+* `enterPowerSaving`
+* `exitPowerSaving`
+* `stopTakingPictures`
