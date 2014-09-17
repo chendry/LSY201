@@ -6,11 +6,6 @@ You can purchase the camera from SparkFun here:
 
 [https://www.sparkfun.com/products/11610](https://www.sparkfun.com/products/11610)
 
-I've tried to mirror the 
-[LSY201 documentation](http://www.linksprite.com/upload/file/1291522825.pdf)
-very closely.  Specifically, I have tried to avoid adding any extra behavior on
-top of what is documented there.
-
 ## Usage
 
 Create a LSY201 instance and call `setSerial` to give a it stream object
@@ -69,6 +64,10 @@ Calling `takePicture` instructs the camera to take a picture and store it as a
 JPEG file which can later be read.
 
     camera.takePicture();
+
+**IMPORTANT**: You must call `reset` before taking another picture.  If you do
+not, the second `takePicture` call will effectively be ignored and you will
+read back the JPEG data from the first image.
 
 ### Reading the Image
 
@@ -129,15 +128,14 @@ Call `setBaudRate` with one of the following values:
 * `LS101::Baud_57600`
 * `LS101::Baud_115200`
 
-
 ### Miscellaneous
 
 * `readJpegFileSize` returns the size, in bytes, of the most recently taken
   picture.
 
-It's not clear from the documentation what the following two commands actually
-do, but I have implemented them and have verified that the camera is sending
-the expected response:
+It's not clear from the documentation what the following commands actually do,
+but I have implemented them and have verified that the camera is sending back
+the correct, documented response:
 
 * `enterPowerSaving`
 * `exitPowerSaving`
