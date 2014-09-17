@@ -144,7 +144,7 @@ void LSY201::stopTakingPictures()
 void LSY201::setCompressionRatio(uint8_t value)
 {
   tx(TX_SET_COMPRESSION_RATIO, sizeof(TX_SET_COMPRESSION_RATIO));
-  _stream->write(value);
+  tx(&value, 1);
 
   rx(RX_SET_COMPRESSION_RATIO, sizeof(RX_SET_COMPRESSION_RATIO));
 }
@@ -152,7 +152,8 @@ void LSY201::setCompressionRatio(uint8_t value)
 void LSY201::setImageSize(Size size)
 {
   tx(TX_SET_IMAGE_SIZE, sizeof(TX_SET_IMAGE_SIZE));
-  _stream->write((uint8_t) size);
+  tx((uint8_t *) &size, 1);
+
   rx(RX_SET_IMAGE_SIZE, sizeof(RX_SET_IMAGE_SIZE));
 }
 
