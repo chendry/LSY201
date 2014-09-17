@@ -24,10 +24,9 @@ object:
 
     camera.setDebugSerial(Serial);
 
-Most of the methods exposed by the LSY201 object send some bytes to the camera
-the request) and read some bytes back (the response.)  Setting a debug serial
-object causes those request and response bytes to be logged to that serial
-object.
+Most of the methods of LSY201 send some bytes to the camera the request) and
+read some bytes back (the response.)  Setting a debug serial object causes
+those request and responses to be logged to that serial object.
 
 For example, the following debug output shows the bytes transmitted and
 received while changing the image resolution to 640x480, resetting the camera,
@@ -60,30 +59,30 @@ waiting for "Init end," and finally taking a picture:
 
 ### Taking the Picture
 
-Calling `takePicture` instructs the camera to take a picture and store it as a
-JPEG file which can later be read.
+`takePicture` takes a picture and stores it as a JPEG file on the camera
+which can later be read back.
 
     camera.takePicture();
 
 **IMPORTANT**: You must perform a reset before taking another picture.  If you
-do not, the second `takePicture` call will effectively be ignored and you will
-read back the JPEG data from the first image.
+do not, the second `takePicture` call will be ignored and you will read back
+the JPEG data from the first image.
 
 ### Reading the Image
 
-Call `readJpegFileSize` repetedly to read the JPEG data stored on the camera
-from the last picture taken.  This method expects three parameters:
+Call `readJpegFileContent` repeatedly to read the JPEG image data stored on the
+camera.  This method expects three parameters:
 
 1. the 0-based offset of where in the JPEG file you want to start reading.  (Must
    be a multiple of 8.)
 2. a buffer to hold the data, and
 3. the size of that buffer.
 
-The method returns `true` when it puts new data into the buffer, or `false` if
-it has not because the end-of-file has been reached.
+The method returns `true` when it has put new data into the buffer, or `false`
+if it has not because the end-of-file has been reached.
 
 For example, the following reads the entire contents of the JPEG and writes
-each byte to the serial port:
+each byte to Serial:
 
     uint16_t offset = 0;
     uint8_t buf[32];
@@ -99,7 +98,7 @@ each byte to the serial port:
 ### Changing the Baud Rate
 
 Call `setBaudRate` with one of the supported baud rates: 9600, 19200, 38400,
-57600, or 115200.  The camea will be using that rate when the method returns,
+57600, or 115200.  The camera will be using that baud when the method returns,
 so you'll need to reconfigure your serial object accordingly.
 
 **IMPORTANT**: Using anything but the default baud will slightly complicate the
@@ -135,8 +134,8 @@ like this:
 
 ### Setting the Image Compression and Size
 
-Call `setImageSize` with one of the following values to set the image size for
-the next picture taken:
+Call `setImageSize` with one of the following values to set the image size used
+for the next picture taken:
 
 * `LS101::Small` (160x120)
 * `LS101::Medium` (320x240)
