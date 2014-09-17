@@ -14,24 +14,16 @@ public:
 
   enum Size
   {
-    Size_320x240 = 0x11,
-    Size_640x480 = 0x00,
-    Size_160x120 = 0x22
-  };
-
-  enum Baud
-  {
-    Baud_9600 = 0xAEC8,
-    Baud_19200 = 0x56E4,
-    Baud_38400 = 0x2AF2,
-    Baud_57600 = 0x1C4C,
-    Baud_115200 = 0x0DA6
+    Small = 0x22,
+    Medium = 0x11,
+    Large = 0x00
   };
 
   LSY201();
   void setSerial(Stream &stream);
   void setDebugSerial(Stream &stream);
   void reset();
+  void waitForInitEnd();
   void takePicture();
   uint16_t readJpegFileSize();
   bool readJpegFileContent(uint16_t offset, uint8_t *buf, uint16_t size);
@@ -40,7 +32,7 @@ public:
   void setImageSize(Size size);
   void enterPowerSaving();
   void exitPowerSaving();
-  void setBaudRate(Baud baud);
+  void setBaudRate(unsigned long baud);
 
 private:
 

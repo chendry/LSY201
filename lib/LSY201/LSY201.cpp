@@ -55,7 +55,10 @@ void LSY201::reset()
 
   tx(TX_RESET, sizeof(TX_RESET));
   rx(RX_RESET, sizeof(RX_RESET));
+}
 
+void LSY201::waitForInitEnd()
+{
   char buf[25] = { 0 }, *p = buf;
 
   while (1)
@@ -165,16 +168,20 @@ void LSY201::exitPowerSaving()
   rx(RX_EXIT_POWER_SAVING, sizeof(RX_EXIT_POWER_SAVING));
 }
 
-void LSY201::setBaudRate(Baud baud)
+void LSY201::setBaudRate(unsigned long baud)
 {
   tx(TX_CHANGE_BAUD_RATE, sizeof(TX_CHANGE_BAUD_RATE));
 
-  uint8_t params[] = {
-    (baud & 0xFF00) >> 8,
-    baud & 0x00FF
+  uint16_t params = 0xC8AE; /* 9600 */
+  switch (baud)
+  {
+    case 19200: params = 0xE456; break;
+    case 38400: params = 0xF22A; break;
+    case 57600: params = 0x4C1C; break;
+    case 115200: params = 0xA60D; break;;
   };
 
-  tx(params, sizeof(params));
+  tx((uint8_t *) &params, 2);
 
   rx(RX_CHANGE_BAUD_RATE, sizeof(RX_CHANGE_BAUD_RATE));
 }
@@ -203,10 +210,22 @@ void LSY201::tx(const uint8_t *bytes, uint8_t length)
 
 void LSY201::rx(const uint8_t *bytes, uint8_t length)
 {
-  if (_debug)
-    _debug->println("expecting bytes:");
+  int i;
 
-  while (length --)
+  if (_debug)
+  {
+    _debug->print("expecting bytes:");
+
+    for (i = 0; i < length; i ++)
+    {
+      _debug->print(' ');
+      _debug->print(bytes[i], HEX);
+    }
+
+    _debug->println();
+  }
+
+  for (i = 0; i < length; i ++)
   {
     uint8_t byte = readByte();
 
@@ -214,17 +233,8 @@ void LSY201::rx(const uint8_t *bytes, uint8_t length)
     {
       _debug->print(byte, HEX);
       _debug->print(" ");
-
-      if (byte == *bytes)
-        _debug->println("ok");
-      else
-      {
-        _debug->print("expected ");
-        _debug->println(*bytes, HEX);
-      }
+      _debug->println(byte == bytes[i] ? "ok" : "unexpected");
     }
-
-    bytes ++;
   }
 }
 

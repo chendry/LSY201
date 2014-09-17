@@ -9,15 +9,15 @@ uint8_t buf[32];
 void setup()
 {
   Serial.begin(38400);
-
   camera_serial.begin(38400);
   camera.setSerial(camera_serial);
-  camera.setImageSize(LSY201::Size_160x120);
 }
 
 void loop()
 {
+  camera.setImageSize(LSY201::Medium);
   camera.reset();
+  camera.waitForInitEnd();
   camera.takePicture();
 
   uint16_t offset = 0;

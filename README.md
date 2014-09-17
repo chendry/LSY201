@@ -31,7 +31,7 @@ object.
 
 For example, the following debug output shows the bytes transmitted and
 received while changing the image resolution to 640x480, resetting the camera,
-and finally taking a picture:
+waiting for "Init end," and finally taking a picture:
 
     sending bytes: 56 0 31 5 4 1 0 19
     expecting bytes:
