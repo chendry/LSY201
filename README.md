@@ -6,10 +6,6 @@ You can purchase the camera from SparkFun here:
 
 [https://www.sparkfun.com/products/11610](https://www.sparkfun.com/products/11610)
 
-## Download
-
-Download version 1.0.0 here: [LSY201.zip](https://github.com/chendry/LSY201/releases/download/v1.0.0/LSY201.zip).
-
 ## Usage
 
 Create a LSY201 instance and call `setSerial` to give a it stream object
