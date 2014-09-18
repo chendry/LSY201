@@ -64,9 +64,9 @@ which can later be read back.
 
     camera.takePicture();
 
-**IMPORTANT**: You must perform a reset before taking another picture.  If you
-do not, the second `takePicture` call will be ignored and you will read back
-the JPEG data from the first image.
+**NOTE**: You must perform a reset before taking another picture.  If you do
+not, the second `takePicture` call will be ignored and you will read back the
+JPEG data from the first image.
 
 ### Reading the Image
 
@@ -101,7 +101,7 @@ Call `setBaudRate` with one of the supported baud rates: 9600, 19200, 38400,
 57600, or 115200.  The camera will be using that baud when the method returns,
 so you'll need to reconfigure your serial object accordingly.
 
-**IMPORTANT**: Using anything but the default baud will slightly complicate the
+**NOTE**: Using anything but the default baud will slightly complicate the
 camera reset process as detailied below.
 
 ### Reset, Baud Rates, and Init End
@@ -159,11 +159,3 @@ both size and compression should look something like this:
 
 * `readJpegFileSize` returns the size, in bytes, of the most recently taken
   picture.
-
-It's not clear from the documentation what the following commands actually do,
-but I have implemented them and have verified that the camera is sending back
-the correct, documented response:
-
-* `enterPowerSaving`
-* `exitPowerSaving`
-* `stopTakingPictures`

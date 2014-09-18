@@ -6,9 +6,9 @@
 
 class LSY201
 {
-  Stream *_stream;
+  Stream *_camera;
   Stream *_debug;
-  bool _foundJpegEOF;
+  bool _eof;
 
 public:
 
@@ -27,11 +27,8 @@ public:
   void takePicture();
   uint16_t readJpegFileSize();
   bool readJpegFileContent(uint16_t offset, uint8_t *buf, uint16_t size);
-  void stopTakingPictures();
   void setCompressionRatio(uint8_t value);
   void setImageSize(Size size);
-  void enterPowerSaving();
-  void exitPowerSaving();
   void setBaudRate(unsigned long baud);
 
 private:
