@@ -23,6 +23,7 @@ public:
   void setSerial(Stream &stream);
   void setDebugSerial(Stream &stream);
   void reset();
+  void resetWithoutWaitingForInitEnd();
   void waitForInitEnd();
   void takePicture();
   uint16_t readJpegFileSize();
@@ -30,6 +31,7 @@ public:
   void setCompressionRatio(uint8_t value);
   void setImageSize(Size size);
   void setBaudRate(unsigned long baud);
+  void stopTakingPictures();
 
 private:
 

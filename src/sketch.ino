@@ -11,20 +11,25 @@ void setup()
   Serial.begin(38400);
   camera_serial.begin(38400);
   camera.setSerial(camera_serial);
+
+  camera.setImageSize(LSY201::Small);
+  camera.reset();
 }
 
 void loop()
 {
-  camera.setImageSize(LSY201::Medium);
-  camera.reset();
-  camera.waitForInitEnd();
   camera.takePicture();
 
   uint16_t offset = 0;
+  uint16_t sum = 0;
   while (camera.readJpegFileContent(offset, buf, sizeof(buf)))
   {
     offset += sizeof(buf);
     for (int i = 0; i < sizeof(buf); i ++)
-      Serial.write(buf[i]);
+      sum += buf[i];
   }
+
+  Serial.println(sum);
+  camera.stopTakingPictures();
+  delay(25);
 }

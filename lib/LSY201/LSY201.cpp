@@ -50,6 +50,12 @@ void LSY201::setDebugSerial(Stream &stream)
 
 void LSY201::reset()
 {
+  resetWithoutWaitingForInitEnd();
+  waitForInitEnd();
+}
+
+void LSY201::resetWithoutWaitingForInitEnd()
+{
   while (_camera->available())
     _camera->read();
 
@@ -167,6 +173,12 @@ void LSY201::setBaudRate(unsigned long baud)
   tx((uint8_t *) &params, 2);
 
   rx(RX_CHANGE_BAUD_RATE, sizeof(RX_CHANGE_BAUD_RATE));
+}
+
+void LSY201::stopTakingPictures()
+{
+  tx(TX_STOP_TAKING_PICTURES, sizeof(TX_STOP_TAKING_PICTURES));
+  rx(RX_STOP_TAKING_PICTURES, sizeof(RX_STOP_TAKING_PICTURES));
 }
 
 void LSY201::tx(const uint8_t *bytes, uint8_t length)
