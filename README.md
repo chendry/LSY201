@@ -6,11 +6,11 @@ You can purchase the camera from SparkFun here:
 
 [https://www.sparkfun.com/products/11610](https://www.sparkfun.com/products/11610)
 
-## Minimal Example
+## A Minimal Example
 
 The following example assumes that the TX and RX pins of the camera are
-attached to pins 2 and 3 respectively of the Arduino.  The code continously
-takes pictures and outputs the raw bytes of the JPEG-encoded images to Serial.
+attached to pins 2 and 3 respectively of the Arduino.  This example continuously
+takes pictures and outputs the raw bytes of the JPEG-encoded images to Serial:
 
     #include <SoftwareSerial.h>
     #include <LSY201.h>
@@ -62,7 +62,7 @@ back.  These requests and responses are logged to the debug serial object when
 present.
 
 For example, the following debug output shows the bytes transmitted and
-received while changing the image resolution to 640x480, resetting the camera,
+received while changing the image size to 640x480, resetting the camera,
 waiting for "Init end," and finally taking a picture:
 
     sending bytes: 56 0 31 5 4 1 0 19
@@ -111,7 +111,7 @@ The method returns `true` if it wrote new data to the buffer, or `false` if it
 did not because the end-of-file had previously been reached.
 
 For example, the following reads the entire contents of the JPEG in 32-byte
-chunks and writes each byte to Serial:
+chunks and writes the raw bytes to Serial:
 
     uint16_t offset = 0;
     uint8_t buf[32];
@@ -139,10 +139,10 @@ consistently sufficient:
     delay(25);
     camera.takePicture();
 
-You can alternatively use `reset` to clear the buffer, but that has the
-additional side effects.
+You can alternatively use `reset` to clear the buffer, but that has some
+additional side effects described below.
 
-### Configuring the Baud Rate
+### Setting the Baud Rate
 
 Call `setBaudRate` with one of the supported baud rates: 9600, 19200, 38400,
 57600, or 115200.  The camera will be using that baud when the method returns
@@ -152,7 +152,7 @@ so you'll need to reconfigure your serial object accordingly:
     camera_serial.begin(9600);
 
 Using a baud rate other than the default 38400 can make development on the
-Arduino a little tricky.  Suppose that your sketch's setup looks like this:
+Arduino a bit tricky.  Suppose that your sketch's `setup` looks like this:
 
     LSY201 camera;
     SoftwareSerial camera_serial(2, 3);
@@ -166,35 +166,34 @@ Arduino a little tricky.  Suppose that your sketch's setup looks like this:
       camera_serial.begin(9600);
     }
 
-This will work the first time.  However, after you reset the arduino or
+This will work the first time.  However, after you reset the Arduino or
 redeploy your sketch, the call to `setBaudRate` will never return.  This is
 because the camera is still operating at 9600 baud.  To get around this you can
 power cycle the camera so that it returns to it's default 38400 baud assumed by
-`setup()`.
+`setup`.
 
 ### Resetting the Camera
 
 Resetting the camera clears the internal buffer and returns the compression
-ratio and baud rate to their befault values.
+ratio and baud rate to their default values.
 
-If you are using the default 38400 baud rate, you can simply call `reset`:
+If you are using the default 38400 baud rate, simply call `reset`:
 
     camera.reset();
 
-If you are not using the default 38400 baud rate, you will need to make two calls:
+Things are a little more complicated if you're not using 38400 baud.  This is
+because a reset actually consists of two steps: sending the reset command, and
+waiting for the camera to output "Init end\r\n" thus signaling that it is okay
+to resume operations.
 
-    /* send the reset command; this has the side-effect of changing the
-     * camera's baud to 38400. */
+The issue is that the camera returns to the default 38400 baud prior to
+outputting "Init end", so you must reconfigure your serial object accordingly:
+
     camera.resetWithoutWaitingForInitEnd();
-
-    /* change the serial object's baud accordingly. */
     camera_serial.begin(38400);
-
-    /* with the correct baud on the serial object, wait for the camera to
-     * output "Init end\r\n" thus signaling it is safe to resume operations. */
     camera.waitForInitEnd();
 
-### Configuring the Image Size
+### Setting the Image Size
 
 Call `setImageSize` with one of the following values to change the image size
 used to encode pictures:
@@ -213,9 +212,9 @@ You must reset the camera for the image size change to take effect:
 Call `setCompressionRatio` with a value between between 0 (low compression,
 high quality) and 0xFF (high compression, low quality.)
 
-Note that resetting the camera returns the compression ratio to it's default
+Note that resetting the camera returns the compression ratio to its default
 value, so if you need to change both the image size and compression ratio, you
-must change the compression ratio after the reset:
+must change the compression ratio after performing the reset:
 
     camera.setImageSize(LS101::Large);
     camera.reset();
@@ -227,5 +226,3 @@ must change the compression ratio after the reset:
 
     camera.takePicture();
     uint16_t size = camera.readJpegFileSize();
-
-### Power Saving Mode
