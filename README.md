@@ -6,6 +6,9 @@ You can purchase the camera from SparkFun here:
 
 [https://www.sparkfun.com/products/11610](https://www.sparkfun.com/products/11610)
 
+You can download the library here:
+[LSY201.zip](https://github.com/chendry/LSY201/releases/download/v1.0.0/LSY201.zip).
+
 ## A Minimal Example
 
 The following example assumes that the TX and RX pins of the camera are
