@@ -11,9 +11,15 @@ void setup()
   Serial.begin(38400);
   camera_serial.begin(38400);
   camera.setSerial(camera_serial);
+  camera.setDebugSerial(Serial);
 
-  camera.setImageSize(LSY201::Small);
-  camera.reset();
+  camera.setBaudRate(9600);
+  camera_serial.begin(9600);
+
+  camera.setCompressionRatio(0x20);
+  Serial.println("done");
+
+delay(30000);
 }
 
 void loop()
