@@ -8,9 +8,11 @@ SoftwareSerial camera_serial(2, 3);
 
 LSY201 camera;
 uint8_t buf[32];
+String hexbuf;
 
 void setup()
 {
+  Serial.begin(115200);
   camera.setSerial(camera_serial);
   camera_serial.begin(38400);
 }
@@ -26,11 +28,25 @@ void loop()
   while (camera.readJpegFileContent(offset, buf, sizeof(buf)))
   {
     for (int i = 0; i < sizeof(buf); i ++)
-      Serial.println(buf[i], HEX);
 
+    {
+      if (buf[i] < 0x10) {
+        hexbuf = "0" + String(buf[i], HEX);
+      }
+      else {
+        hexbuf = String(buf[i], HEX);
+      }
+      //Serial.write(buf[i]); // Uncomment this for write character to Serial
+      Serial.print(hexbuf); // Uncomment this for print HEX value of character to Serial
+      if ((buf[i - 1] == 0xFF) && (buf[i] == 0xD9))
+      {
+        break;
+      }
+    }
     offset += sizeof(buf);
   }
 
+  Serial.println();
   Serial.println("Done.");
 
   camera.stopTakingPictures();
