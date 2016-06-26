@@ -17,30 +17,44 @@ takes pictures and outputs the raw bytes of the JPEG-encoded images to Serial:
 
     #include <SoftwareSerial.h>
     #include <LSY201.h>
-
+        
     SoftwareSerial camera_serial(2, 3);
     LSY201 camera;
     uint8_t buf[32];
-
+    String hexbuf;
     void setup()
     {
+      Serial.begin(115200);
       camera.setSerial(camera_serial);
       camera_serial.begin(38400);
     }
-
+        
     void loop()
     {
       camera.reset();
       camera.takePicture();
-
       uint16_t offset = 0;
       while (camera.readJpegFileContent(offset, buf, sizeof(buf)))
       {
         for (int i = 0; i < sizeof(buf); i ++)
-          Serial.write(buf[i]);
-
+         {
+            if (buf[i] < 0x10) 
+            {
+              hexbuf = "0" + String(buf[i], HEX);
+            }
+            else 
+            {
+              hexbuf = String(buf[i], HEX);
+            }
+           Serial.write(buf[1]); 
+          if ((buf[i - 1] == 0xFF) && (buf[i] == 0xD9))
+          {
+             break;
+            }
+          }
         offset += sizeof(buf);
       }
+      Serial.println();
     }
 
 ## Usage
@@ -201,13 +215,13 @@ outputting "Init end", so you must reconfigure your serial object accordingly:
 Call `setImageSize` with one of the following values to change the image size
 used to encode pictures:
 
-* `LS101::Small` (160x120)
-* `LS101::Medium` (320x240)
-* `LS101::Large` (640x480)
+* `LSY201::Small` (160x120)
+* `LSY201::Medium` (320x240)
+* `LSY201::Large` (640x480)
 
 You must reset the camera for the image size change to take effect:
 
-    camera.setImageSize(LS101::Small);
+    camera.setImageSize(LSY201::Small);
     camera.reset();
 
 ### Setting the Compression Ratio
@@ -219,7 +233,7 @@ Note that resetting the camera returns the compression ratio to its default
 value, so if you need to change both the image size and compression ratio, you
 must change the compression ratio after performing the reset:
 
-    camera.setImageSize(LS101::Large);
+    camera.setImageSize(LSY201::Large);
     camera.reset();
     camera.setCompressionRatio(0x20);
 
